@@ -1,0 +1,89 @@
+#!/usr/local/bin/node
+
+'use strict';
+
+// monkey patching console.log and console.error
+require('./utils/log');
+
+var spawn  = require('child_process').spawn;
+var argv   = require('minimist')(process.argv.slice(2));
+var fs     = require('fs');
+var path   = require('path');
+var _      = require('lodash');
+var mkdirp = require('mkdirp');
+
+//=============================
+
+var allScrapes = null;
+var scrapes    = [];
+
+// check if scrapez
+try {
+  allScrapes= fs.readdirSync(path.resolve('scrapes'));
+} catch (e) {
+  console.error(e);
+  console.log('creating scrapes directory, now add some web scrapers!');  
+  mkdirp(path.resolve('scrapes'));
+  process.exit(1);
+}
+
+// get all the scrape tasks to run
+if (allScrapes) {
+  allScrapes.forEach(function forEachScrape(scrape) {
+    if (path.extname(scrape) === '.js') {
+     scrapes.push(scrape); 
+    }
+  });
+
+  var scrapesLen = scrapes.length;
+  if (scrapesLen > 0) {
+    // check to see if we're listing the available scrapes
+    if (argv.list || argv.l) {
+      console.log('There are', scrapesLen, 'scrapes available');
+      scrapes[0] = ' - ' + scrapes[0];
+      scrapes = _.chain(scrapes)
+        .map(function (scrape) { return scrape.slice(0, -3); })
+        .join('\n - ')
+        .value();
+
+      console.info(scrapes);
+      process.exit(0);
+    }
+
+
+    // @TODO:  generate the args and the info needed
+    if (argv.img || argv.i) {
+      console.log('scraping images');
+      var casper = spawn('casperjs', ['scrapes/imgs.js']);
+
+      casper.stdout.on('data', function(out) {
+        console.log(out);
+      });
+
+      casper.stderr.on('data', function(err) {
+        console.error(err);  
+      });
+
+      casper.on('close', function() {
+        console.log('casper process closing');
+      });
+  
+      process.on('exit', function() {
+        console.log('exiting...');
+        casper.kill();  
+      });
+    }
+
+
+
+  } else {
+    console.error('There are no available scrapes');
+    process.exit(1);
+  }
+}
+
+// check to see if url
+if (!argv.url && !argv.u) {
+  console.error('requires a --url or -u argument with a following valid url.');
+  process.exit(1);
+}

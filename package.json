@@ -1,0 +1,31 @@
+{
+  "name": "scraperz",
+  "version": "0.0.1",
+  "description": "web scraper utility wrapper usng casperjs",
+  "main": "app.js",
+  "dependencies": {
+    "casperjs": "^1.1.0-beta3",
+    "lodash": "^2.4.1",
+    "minimist": "^1.1.0",
+    "mkdirp": "^0.5.0",
+    "simple-ansi": "0.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:JustinBeaudry/scraperz.git"
+  },
+  "keywords": [
+    "web",
+    "scraper"
+  ],
+  "author": "JustinBeaudry",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JustinBeaudry/scraperz/issues"
+  },
+  "homepage": "https://github.com/JustinBeaudry/scraperz"
+}
